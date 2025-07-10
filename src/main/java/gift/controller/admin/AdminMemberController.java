@@ -1,13 +1,11 @@
 package gift.controller.admin;
 
-import static gift.util.RoleUtil.extractRole;
-
+import gift.annotation.CurrentRole;
 import gift.dto.member.MemberForm;
 import gift.entity.member.Member;
 import gift.entity.member.value.Role;
 import gift.exception.custom.MemberNotFoundException;
 import gift.service.member.MemberService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.stereotype.Controller;
@@ -33,15 +31,17 @@ public class AdminMemberController {
     }
 
     @GetMapping
-    public String list(HttpServletRequest req, Model model) {
-        List<Member> members = memberService.getAllMembers(extractRole(req));
+    public String list(@CurrentRole Role role, Model model) {
+        List<Member> members = memberService.getAllMembers(role);
         model.addAttribute("members", members);
         return "admin/member_list";
     }
 
     @GetMapping("/new")
-    public String createForm(Model model) {
-        model.addAttribute("memberForm", new MemberForm(null, "", "", Role.USER));
+    public String createForm(@CurrentRole Role role, Model model) {
+        model.addAttribute(
+                "memberForm",
+                new MemberForm(null, "", "", Role.USER));
         return "admin/member_form";
     }
 
@@ -50,13 +50,13 @@ public class AdminMemberController {
             @Valid @ModelAttribute("memberForm") MemberForm form,
             BindingResult br,
             RedirectAttributes ra,
-            HttpServletRequest req
+            @CurrentRole Role role
     ) {
         if (br.hasErrors()) {
             return "admin/member_form";
         }
         Member created = memberService.createMember(
-                form.email(), form.password(), form.role(), extractRole(req)
+                form.email(), form.password(), form.role(), role
         );
         ra.addFlashAttribute("info", "회원이 등록되었습니다: " + created.getEmail());
         return "redirect:/admin/members";
@@ -66,9 +66,9 @@ public class AdminMemberController {
     public String editForm(
             @PathVariable Long id,
             Model model,
-            HttpServletRequest req
+            @CurrentRole Role role
     ) {
-        Member m = memberService.getMemberById(id, extractRole(req))
+        Member m = memberService.getMemberById(id, role)
                 .orElseThrow(() -> new MemberNotFoundException(id.toString()));
         model.addAttribute("memberForm", new MemberForm(
                 m.getId().id(), m.getEmail().email(), m.getPassword().password(), m.getRole()
@@ -82,13 +82,13 @@ public class AdminMemberController {
             @Valid @ModelAttribute("memberForm") MemberForm form,
             BindingResult br,
             RedirectAttributes ra,
-            HttpServletRequest req
+            @CurrentRole Role role
     ) {
         if (br.hasErrors()) {
             return "admin/member_form";
         }
         Member updated = memberService.updateMember(
-                id, form.email(), form.password(), form.role(), extractRole(req)
+                id, form.email(), form.password(), form.role(), role
         );
         ra.addFlashAttribute("info", "회원 정보가 수정되었습니다: " + updated.getEmail());
         return "redirect:/admin/members";
@@ -98,9 +98,9 @@ public class AdminMemberController {
     public String delete(
             @PathVariable Long id,
             RedirectAttributes ra,
-            HttpServletRequest req
+            @CurrentRole Role role
     ) {
-        memberService.deleteMember(id, extractRole(req));
+        memberService.deleteMember(id, role);
         ra.addFlashAttribute("info", "회원이 삭제되었습니다. ID=" + id);
         return "redirect:/admin/members";
     }
