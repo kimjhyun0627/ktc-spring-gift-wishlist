@@ -56,7 +56,14 @@ public class AdminAccountInitializer {
                     String.valueOf(Role.USER),
                     LocalDateTime.now()
             );
-            memberRepository.register(user);
+            try {
+                memberRepository.register(user);
+                System.out.println("Admin 계정 생성 완료");
+            } catch (DataIntegrityViolationException e) {
+                System.out.println("Admin 계정이 이미 존재합니다.");
+            }
+        } else {
+            System.out.println("Admin 계정이 이미 존재합니다.");
         }
     }
 }

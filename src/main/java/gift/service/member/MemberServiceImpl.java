@@ -21,9 +21,9 @@ public class MemberServiceImpl implements MemberService {
     private final JwtUtil jwtUtil;
     private final MemberRepository memberRepository;
 
-    public MemberServiceImpl(MemberRepository memberDao, JwtUtil jwtUtil) {
+    public MemberServiceImpl(MemberRepository memberRepository, JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
-        this.memberRepository = memberDao;
+        this.memberRepository = memberRepository;
     }
 
     public static String sha256(String input) {
@@ -41,9 +41,9 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public AuthResponse register(AuthRequest req) {
-        String hash = sha256(req.password());
-        Member m = Member.register(req.email(), hash);
+    public AuthResponse register(AuthRequest authRequest) {
+        String hash = sha256(authRequest.password());
+        Member m = Member.register(authRequest.email(), hash);
         m = memberRepository.register(m);
         String token = jwtUtil.generateToken(m.getId().id(), m.getRole());
         return new AuthResponse(token);

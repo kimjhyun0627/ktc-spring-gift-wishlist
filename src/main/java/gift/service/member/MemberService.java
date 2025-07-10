@@ -1,4 +1,3 @@
-// gift/service/member/MemberService.java
 package gift.service.member;
 
 import gift.dto.member.AuthRequest;
@@ -10,7 +9,7 @@ import java.util.Optional;
 
 public interface MemberService {
 
-    AuthResponse register(AuthRequest req);
+    AuthResponse register(AuthRequest authRequest);
 
     AuthResponse login(String email, String rawPassword);
 

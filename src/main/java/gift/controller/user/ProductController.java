@@ -28,13 +28,14 @@ public class ProductController {
 
     private final ProductService productService;
 
-    public ProductController(ProductService svc) {
-        this.productService = svc;
+    public ProductController(ProductService productService) {
+        this.productService = productService;
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductResponse>> getAll(HttpServletRequest request) {
-        List<ProductResponse> list = productService.getAllProducts(extractRole(request)).stream()
+    public ResponseEntity<List<ProductResponse>> getAll(HttpServletRequest httpServletRequest) {
+        List<ProductResponse> list = productService.getAllProducts(extractRole(httpServletRequest))
+                .stream()
                 .map(Product::toResponse)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(list);
@@ -42,37 +43,39 @@ public class ProductController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponse> getById(
-            HttpServletRequest request,
+            HttpServletRequest httpServletRequest,
             @PathVariable Long id) {
-        Product p = productService.getProductById(id, extractRole(request))
+        Product p = productService.getProductById(id, extractRole(httpServletRequest))
                 .orElseThrow(() -> new ProductNotFoundException(id));
         return ResponseEntity.ok(p.toResponse());
     }
 
     @PostMapping
     public ResponseEntity<ProductResponse> create(
-            HttpServletRequest request,
-            @Valid @RequestBody ProductRequest dto) {
+            HttpServletRequest httpServletRequest,
+            @Valid @RequestBody ProductRequest productRequest) {
         Product saved = productService.createProduct(
-                dto.name(), dto.price(), dto.imageUrl(), extractRole(request));
+                productRequest.name(), productRequest.price(), productRequest.imageUrl(),
+                extractRole(httpServletRequest));
         return ResponseEntity.status(HttpStatus.CREATED).body(saved.toResponse());
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ProductResponse> update(
-            HttpServletRequest request,
+            HttpServletRequest httpServletRequest,
             @PathVariable Long id,
-            @Valid @RequestBody ProductRequest dto) {
+            @Valid @RequestBody ProductRequest productRequest) {
         Product updated = productService.updateProduct(
-                id, dto.name(), dto.price(), dto.imageUrl(), extractRole(request));
+                id, productRequest.name(), productRequest.price(), productRequest.imageUrl(),
+                extractRole(httpServletRequest));
         return ResponseEntity.ok(updated.toResponse());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
-            HttpServletRequest request,
+            HttpServletRequest httpServletRequest,
             @PathVariable Long id) {
-        productService.deleteProduct(id, extractRole(request));
+        productService.deleteProduct(id, extractRole(httpServletRequest));
         return ResponseEntity.noContent().build();
     }
 }

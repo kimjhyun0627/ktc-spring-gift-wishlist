@@ -129,8 +129,8 @@ class AdminMemberControllerTest {
         void 생성_검증실패() throws Exception {
             mockMvc.perform(post("/admin/members/new")
                             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                            .param("email", "")  // NotBlank 위반
-                            .param("password", "123")  // Size(min=6) 위반
+                            .param("email", "")
+                            .param("password", "123")
                             .param("role", "")
                             .requestAttr("authClaims", TestUtils.mockClaims(String.valueOf(ADMIN))))
                     .andExpect(status().isOk())
@@ -216,7 +216,7 @@ class AdminMemberControllerTest {
         void 수정_검증실패() throws Exception {
             mockMvc.perform(put("/admin/members/5")
                             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                            .param("email", "")  // 빈 이메일
+                            .param("email", "")
                             .param("password", "123")
                             .param("role", "")
                             .requestAttr("authClaims", TestUtils.mockClaims(String.valueOf(ADMIN))))

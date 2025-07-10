@@ -47,7 +47,7 @@ public class AdminMemberController {
 
     @PostMapping("/new")
     public String create(
-            @Valid @ModelAttribute("memberForm") MemberForm form,
+            @Valid @ModelAttribute("memberForm") MemberForm memberForm,
             BindingResult br,
             RedirectAttributes ra,
             @CurrentRole Role role
@@ -56,7 +56,7 @@ public class AdminMemberController {
             return "admin/member_form";
         }
         Member created = memberService.createMember(
-                form.email(), form.password(), form.role(), role
+                memberForm.email(), memberForm.password(), memberForm.role(), role
         );
         ra.addFlashAttribute("info", "회원이 등록되었습니다: " + created.getEmail());
         return "redirect:/admin/members";
@@ -79,29 +79,29 @@ public class AdminMemberController {
     @PutMapping("/{id}")
     public String update(
             @PathVariable Long id,
-            @Valid @ModelAttribute("memberForm") MemberForm form,
-            BindingResult br,
-            RedirectAttributes ra,
+            @Valid @ModelAttribute("memberForm") MemberForm memberForm,
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes,
             @CurrentRole Role role
     ) {
-        if (br.hasErrors()) {
+        if (bindingResult.hasErrors()) {
             return "admin/member_form";
         }
         Member updated = memberService.updateMember(
-                id, form.email(), form.password(), form.role(), role
+                id, memberForm.email(), memberForm.password(), memberForm.role(), role
         );
-        ra.addFlashAttribute("info", "회원 정보가 수정되었습니다: " + updated.getEmail());
+        redirectAttributes.addFlashAttribute("info", "회원 정보가 수정되었습니다: " + updated.getEmail());
         return "redirect:/admin/members";
     }
 
     @DeleteMapping("/{id}")
     public String delete(
             @PathVariable Long id,
-            RedirectAttributes ra,
+            RedirectAttributes redirectAttributes,
             @CurrentRole Role role
     ) {
         memberService.deleteMember(id, role);
-        ra.addFlashAttribute("info", "회원이 삭제되었습니다. ID=" + id);
+        redirectAttributes.addFlashAttribute("info", "회원이 삭제되었습니다. ID=" + id);
         return "redirect:/admin/members";
     }
 }

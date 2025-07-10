@@ -1,4 +1,3 @@
-// src/main/java/gift/dto/ProductRequest.java
 package gift.dto.product;
 
 import gift.entity.product.Product;

@@ -1,4 +1,3 @@
-// src/test/java/gift/service/product/ProductServiceTest.java
 package gift.service.product;
 
 import static org.assertj.core.api.Assertions.assertThat;

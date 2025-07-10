@@ -1,4 +1,3 @@
-// src/test/java/gift/controller/admin/AdminDashboardControllerTest.java
 package gift.controller.admin;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -39,9 +38,6 @@ class AdminDashboardControllerTest {
     @MockitoBean
     private BearerAuthUtil bearerAuthUtil;
 
-    /**
-     * 테스트용 RequestPostProcessor로 authClaims 어트리뷰트를 설정
-     */
     private RequestPostProcessor withAuthClaims(Claims claims) {
         return request -> {
             request.setAttribute("authClaims", claims);
@@ -61,7 +57,6 @@ class AdminDashboardControllerTest {
     @Test
     @DisplayName("GET /admin/dashboard - authClaims 있으면 이메일 모델에 추가")
     void dashboardWithClaims() throws Exception {
-        // Claims.getSubject() 목킹
         Mockito.when(claims.getSubject()).thenReturn(EMAIL);
 
         mockMvc.perform(get("/admin/dashboard").with(withAuthClaims(claims)))

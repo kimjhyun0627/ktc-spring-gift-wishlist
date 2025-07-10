@@ -1,4 +1,3 @@
-// src/test/java/gift/service/member/MemberServiceTest.java
 package gift.service.member;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -49,7 +48,6 @@ class MemberServiceTest {
 
     @BeforeEach
     void setUp() {
-        // fixture를 사용해 ID=1, USER 역할의 member 생성
         existing = MemberFixture.newRegisteredMember(
                 1L,
                 "user@test.com",
@@ -91,7 +89,6 @@ class MemberServiceTest {
         @Test
         @DisplayName("login: 비밀번호 불일치 예외")
         void loginBadPassword() {
-            // 잘못된 해시로 생성된 fixture
             Member wrong = MemberFixture.newRegisteredMember(
                     2L,
                     "user@test.com",

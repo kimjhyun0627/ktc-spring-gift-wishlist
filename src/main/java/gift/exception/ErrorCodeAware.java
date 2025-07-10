@@ -1,4 +1,3 @@
-// 1) ErrorCodeAware 인터페이스
 package gift.exception;
 
 import gift.exception.handler.ErrorCode;

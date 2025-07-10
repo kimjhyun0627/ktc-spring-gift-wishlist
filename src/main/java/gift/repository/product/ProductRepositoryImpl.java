@@ -21,9 +21,12 @@ public class ProductRepositoryImpl implements ProductRepository {
     private final SimpleJdbcInsert insert;
     private final RowMapper<Product> productRowMapper;
 
-    public ProductRepositoryImpl(JdbcTemplate jdbc, DataSource dataSource,
-            ProductRowMapper productRowMapper) {
-        this.jdbc = jdbc;
+    public ProductRepositoryImpl(
+            JdbcTemplate jdbcTemplate,
+            DataSource dataSource,
+            ProductRowMapper productRowMapper
+    ) {
+        this.jdbc = jdbcTemplate;
         this.insert = new SimpleJdbcInsert(dataSource)
                 .withTableName("product")
                 .usingGeneratedKeyColumns("id");

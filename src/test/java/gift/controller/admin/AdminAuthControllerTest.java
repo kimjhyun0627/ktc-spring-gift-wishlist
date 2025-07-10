@@ -1,4 +1,3 @@
-// src/test/java/gift/controller/admin/AdminAuthControllerTest.java
 package gift.controller.admin;
 
 import static org.mockito.BDDMockito.given;
@@ -47,7 +46,7 @@ class AdminAuthControllerTest {
     @BeforeEach
     void setUp() {
         AdminAuthController controller = new AdminAuthController(memberService);
-        AdminCookieFilter adminCookieFilter = new AdminCookieFilter(); // JwtUtil이 필요 없으면 기본 생성자
+        AdminCookieFilter adminCookieFilter = new AdminCookieFilter();
 
         mockMvc = standaloneSetup(controller)
                 .addFilter(adminCookieFilter, "/admin/*")
@@ -78,7 +77,7 @@ class AdminAuthControllerTest {
     void loginSubmitValidationError() throws Exception {
         mockMvc.perform(post("/admin/login")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("email", "invalid-email") // assume validation requires email format
+                        .param("email", "invalid-email")
                         .param("password", ""))
                 .andExpect(status().isOk())
                 .andExpect(view().name("admin/login_form"));

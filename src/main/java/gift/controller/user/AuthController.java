@@ -17,13 +17,13 @@ public class AuthController {
 
     private final MemberService memberService;
 
-    public AuthController(MemberService svc) {
-        this.memberService = svc;
+    public AuthController(MemberService memberService) {
+        this.memberService = memberService;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody AuthRequest req) {
-        AuthResponse resp = memberService.register(req);
+    public ResponseEntity<AuthResponse> register(@RequestBody AuthRequest authRequest) {
+        AuthResponse resp = memberService.register(authRequest);
         return ResponseEntity.status(201).body(resp);
     }
 

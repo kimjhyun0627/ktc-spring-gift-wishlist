@@ -20,38 +20,38 @@ public abstract class JwtFilter extends OncePerRequestFilter {
         this.jwtUtil = jwtUtil;
     }
 
-    protected abstract boolean shouldFilter(HttpServletRequest request);
+    protected abstract boolean shouldFilter(HttpServletRequest httpServletRequest);
 
-    protected abstract String resolveToken(HttpServletRequest request);
+    protected abstract String resolveToken(HttpServletRequest httpServletRequest);
 
-    protected abstract void writeError(HttpServletResponse response, String message)
+    protected abstract void writeError(HttpServletResponse httpServletResponse, String message)
             throws IOException;
 
     @Override
     protected void doFilterInternal(
-            @NotNull HttpServletRequest request,
-            @NotNull HttpServletResponse response,
-            @NotNull FilterChain chain
+            @NotNull HttpServletRequest httpServletRequest,
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull FilterChain filterChain
     ) throws ServletException, IOException {
-        if (!shouldFilter(request)) {
-            chain.doFilter(request, response);
+        if (!shouldFilter(httpServletRequest)) {
+            filterChain.doFilter(httpServletRequest, httpServletResponse);
             return;
         }
 
-        String token = resolveToken(request);
+        String token = resolveToken(httpServletRequest);
         if (token == null || token.isBlank()) {
-            writeError(response, "유효한 토큰이 필요합니다.");
+            writeError(httpServletResponse, "유효한 토큰이 필요합니다.");
             return;
         }
 
         try {
             Jws<Claims> jws = jwtUtil.parseToken(token);
-            request.setAttribute("authClaims", jws.getPayload());
+            httpServletRequest.setAttribute("authClaims", jws.getPayload());
         } catch (JwtException ex) {
-            writeError(response, "유효하지 않은 토큰입니다.");
+            writeError(httpServletResponse, "유효하지 않은 토큰입니다.");
             return;
         }
 
-        chain.doFilter(request, response);
+        filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 }

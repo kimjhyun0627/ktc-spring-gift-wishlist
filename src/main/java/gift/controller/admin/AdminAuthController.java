@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/admin")
 public class AdminAuthController {
 
-    private final MemberService authService;
+    private final MemberService memberService;
 
-    public AdminAuthController(MemberService authService) {
-        this.authService = authService;
+    public AdminAuthController(MemberService memberService) {
+        this.memberService = memberService;
     }
 
     @GetMapping("/login")
@@ -36,7 +36,7 @@ public class AdminAuthController {
 
     @PostMapping("/login")
     public String loginSubmit(
-            @Valid @ModelAttribute("authRequest") AuthRequest form,
+            @Valid @ModelAttribute("authRequest") AuthRequest authRequest,
             BindingResult bindingResult,
             HttpServletRequest request,
             Model model
@@ -46,7 +46,8 @@ public class AdminAuthController {
         }
 
         try {
-            AuthResponse authResp = authService.login(form.email(), form.password());
+            AuthResponse authResp = memberService.login(authRequest.email(),
+                    authRequest.password());
             request.setAttribute("AUTH_TOKEN", authResp.token());
             return "redirect:/admin/dashboard";
         } catch (IllegalArgumentException e) {
@@ -56,8 +57,8 @@ public class AdminAuthController {
     }
 
     @GetMapping("/logout")
-    public String logout(HttpServletRequest request) {
-        request.setAttribute("LOGOUT", true);
+    public String logout(HttpServletRequest httpServletRequest) {
+        httpServletRequest.setAttribute("LOGOUT", true);
         return "redirect:/admin/login";
     }
 

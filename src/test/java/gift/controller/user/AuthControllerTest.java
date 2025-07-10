@@ -1,4 +1,3 @@
-// src/test/java/gift/controller/user/AuthControllerTest.java
 package gift.controller.user;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -50,7 +49,6 @@ class AuthControllerTest {
     @Test
     @DisplayName("POST /api/members/register - 회원가입 성공 (201)")
     void registerSuccess() throws Exception {
-        // 픽스처 제거: 직접 이메일/비밀번호 지정
         AuthRequest req = new AuthRequest("user@test.com", "pwd");
         AuthResponse resp = new AuthResponse("token123");
 
@@ -67,11 +65,9 @@ class AuthControllerTest {
     @Test
     @DisplayName("POST /api/members/login - 로그인 성공 (200)")
     void loginSuccess() throws Exception {
-        // 로그인 테스트에서는 Member 픽스처를 사용하지 않습니다.
-        String basicHeader = "Basic dXNlcjp3b3Jk"; // 사용자:비밀번호 => user:word
+        String basicHeader = "Basic dXNlcjp3b3Jk";
         AuthResponse resp = new AuthResponse("jwt-token");
 
-        // memberService.login 호출만 목(mock) 설정
         Mockito.when(memberService.login("user", "word")).thenReturn(resp);
 
         try (MockedStatic<BasicAuthUtil> util = Mockito.mockStatic(BasicAuthUtil.class)) {
@@ -88,7 +84,7 @@ class AuthControllerTest {
     @Test
     @DisplayName("POST /api/members/login - 인증 실패 시 401")
     void loginFailureUnauthorized() throws Exception {
-        String basicHeader = "Basic aW52YWxpZDppbnZhbGlk"; // invalid:invalid
+        String basicHeader = "Basic aW52YWxpZDppbnZhbGlk";
 
         Mockito.when(memberService.login("invalid", "invalid"))
                 .thenThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized"));

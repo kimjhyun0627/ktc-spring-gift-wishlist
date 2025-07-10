@@ -10,13 +10,13 @@ import org.springframework.stereotype.Component;
 public class ProductRowMapper implements RowMapper<Product> {
 
     @Override
-    public Product mapRow(ResultSet rs, int rowNum) throws SQLException {
+    public Product mapRow(ResultSet resultSet, int rowNum) throws SQLException {
         return Product.of(
-                rs.getLong("id"),
-                rs.getString("name"),
-                rs.getInt("price"),
-                rs.getString("image_url"),
-                rs.getBoolean("hidden")
+                resultSet.getLong("id"),
+                resultSet.getString("name"),
+                resultSet.getInt("price"),
+                resultSet.getString("image_url"),
+                resultSet.getBoolean("hidden")
         );
     }
 }

@@ -17,37 +17,38 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class AdminCookieFilter extends OncePerRequestFilter {
 
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        String uri = request.getRequestURI();
-        String ctx = request.getContextPath();
+    protected boolean shouldNotFilter(HttpServletRequest httpServletRequest)
+            throws ServletException {
+        String uri = httpServletRequest.getRequestURI();
+        String ctx = httpServletRequest.getContextPath();
         return !(uri.equals(ctx + "/admin/login") || uri.equals(ctx + "/admin/logout"));
     }
 
     @Override
     protected void doFilterInternal(
-            @NotNull HttpServletRequest request,
-            @NotNull HttpServletResponse response,
+            @NotNull HttpServletRequest httpServletRequest,
+            @NotNull HttpServletResponse httpServletResponse,
             FilterChain filterChain)
             throws ServletException, IOException {
 
-        filterChain.doFilter(request, response);
+        filterChain.doFilter(httpServletRequest, httpServletResponse);
 
-        Object tokenObj = request.getAttribute("AUTH_TOKEN");
+        Object tokenObj = httpServletRequest.getAttribute("AUTH_TOKEN");
         if (tokenObj instanceof String token) {
             Cookie cookie = new Cookie("AUTH_TOKEN", token);
             cookie.setHttpOnly(true);
             cookie.setPath("/");
             cookie.setMaxAge(60 * 60);
-            response.addCookie(cookie);
+            httpServletResponse.addCookie(cookie);
         }
 
-        Object logoutObj = request.getAttribute("LOGOUT");
+        Object logoutObj = httpServletRequest.getAttribute("LOGOUT");
         if (logoutObj instanceof Boolean && (Boolean) logoutObj) {
             Cookie cookie = new Cookie("AUTH_TOKEN", null);
             cookie.setHttpOnly(true);
             cookie.setPath("/");
             cookie.setMaxAge(0);
-            response.addCookie(cookie);
+            httpServletResponse.addCookie(cookie);
         }
 
     }

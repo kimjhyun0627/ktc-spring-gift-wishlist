@@ -1,4 +1,3 @@
-// src/test/java/gift/fixture/ProductFixture.java
 package gift.fixture;
 
 import gift.entity.product.Product;
@@ -15,7 +14,6 @@ public final class ProductFixture {
             String imageUrl,
             boolean hidden
     ) {
-        // Product.of(id, name, price, imageUrl, hidden) 팩토리 메서드가 존재한다고 가정
         return Product.of(id, name, price, imageUrl, hidden);
     }
 

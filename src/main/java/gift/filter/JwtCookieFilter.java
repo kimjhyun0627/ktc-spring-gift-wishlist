@@ -19,9 +19,9 @@ public class JwtCookieFilter extends JwtFilter {
     }
 
     @Override
-    protected boolean shouldFilter(HttpServletRequest request) {
-        String path = request.getRequestURI();
-        String ctx = request.getContextPath();
+    protected boolean shouldFilter(HttpServletRequest httpServletRequest) {
+        String path = httpServletRequest.getRequestURI();
+        String ctx = httpServletRequest.getContextPath();
         if (path.startsWith(ctx + "/admin/*") ||
                 path.startsWith(ctx + "/api/") ||
                 path.startsWith(ctx + "/css/") ||
@@ -32,8 +32,8 @@ public class JwtCookieFilter extends JwtFilter {
     }
 
     @Override
-    protected String resolveToken(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
+    protected String resolveToken(HttpServletRequest httpServletRequest) {
+        Cookie[] cookies = httpServletRequest.getCookies();
         if (cookies == null) {
             return null;
         }
@@ -45,13 +45,14 @@ public class JwtCookieFilter extends JwtFilter {
     }
 
     @Override
-    protected void writeError(HttpServletResponse response, String message) throws IOException {
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.setContentType("application/json;charset=UTF-8");
+    protected void writeError(HttpServletResponse httpServletResponse, String message)
+            throws IOException {
+        httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        httpServletResponse.setContentType("application/json;charset=UTF-8");
         String body = String.format(
                 "{\"status\":%d,\"error\":\"%s\"}",
                 HttpServletResponse.SC_UNAUTHORIZED, message
         );
-        response.getWriter().write(body);
+        httpServletResponse.getWriter().write(body);
     }
 }

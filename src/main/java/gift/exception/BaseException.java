@@ -1,4 +1,3 @@
-// 2) BaseException 추상 클래스
 package gift.exception;
 
 import gift.exception.handler.ErrorCode;

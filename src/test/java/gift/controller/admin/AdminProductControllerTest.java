@@ -1,4 +1,3 @@
-// src/test/java/gift/controller/admin/AdminProductControllerTest.java
 package gift.controller.admin;
 
 import static org.mockito.BDDMockito.given;
@@ -58,7 +57,6 @@ class AdminProductControllerTest {
     @Test
     @DisplayName("GET /admin/products - 관리자 리스트 조회")
     void listAsAdmin() throws Exception {
-        // valid HTTP URL 사용
         Product p = ProductFixture.visible(1L, "A", 10, "http://example.com/image.png");
         given(productService.getAllProducts(ADMIN)).willReturn(List.of(p));
 

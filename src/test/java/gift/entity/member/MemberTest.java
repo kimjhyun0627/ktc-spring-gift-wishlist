@@ -16,7 +16,7 @@ class MemberTest {
     @Test
     void register_setsDefaults() {
         String email = "test@example.com";
-        String hash = "abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789"; // 64 hex chars
+        String hash = "abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789";
 
         Member m = Member.register(email, hash);
 
@@ -118,7 +118,7 @@ class MemberTest {
 
     @Test
     void invalidPasswordHash_throwsException() {
-        String badHash = "short"; // not 64 hex chars
+        String badHash = "short";
         assertThrows(InvalidMemberException.class, () ->
                 Member.of(5L, "u@u.com", badHash, "USER", LocalDateTime.now())
         );

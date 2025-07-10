@@ -47,9 +47,9 @@ public class AdminProductController {
             @CurrentRole Role role,
             @Valid @ModelAttribute ProductForm productForm,
             BindingResult bindingResult,
-            HttpServletResponse response
+            HttpServletResponse httpServletResponse
     ) {
-        String errorView = checkErrors(bindingResult, response);
+        String errorView = checkErrors(bindingResult, httpServletResponse);
         if (errorView != null) {
             return errorView;
         }
@@ -86,9 +86,9 @@ public class AdminProductController {
             @PathVariable Long id,
             @Valid @ModelAttribute ProductForm productForm,
             BindingResult bindingResult,
-            HttpServletResponse response
+            HttpServletResponse httpServletResponse
     ) {
-        String errorView = checkErrors(bindingResult, response);
+        String errorView = checkErrors(bindingResult, httpServletResponse);
         if (errorView != null) {
             return errorView;
         }
@@ -121,9 +121,9 @@ public class AdminProductController {
     }
 
     private String checkErrors(BindingResult bindingResult,
-            HttpServletResponse response) {
+            HttpServletResponse httpServletResponse) {
         if (bindingResult.hasErrors()) {
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
             return "admin/product_form";
         }
         return null;

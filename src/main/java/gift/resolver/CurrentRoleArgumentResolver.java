@@ -20,10 +20,12 @@ public class CurrentRoleArgumentResolver implements HandlerMethodArgumentResolve
     }
 
     @Override
-    public Object resolveArgument(@NotNull MethodParameter parameter,
+    public Object resolveArgument(
+            @NotNull MethodParameter parameter,
             ModelAndViewContainer mavContainer,
             NativeWebRequest webRequest,
-            WebDataBinderFactory binderFactory) {
+            WebDataBinderFactory binderFactory
+    ) {
         HttpServletRequest request =
                 webRequest.getNativeRequest(HttpServletRequest.class);
         return RoleUtil.extractRole(request);

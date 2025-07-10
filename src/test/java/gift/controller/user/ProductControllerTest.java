@@ -1,4 +1,3 @@
-// src/test/java/gift/controller/user/ProductControllerTest.java
 package gift.controller.user;
 
 import static org.hamcrest.Matchers.is;
@@ -203,7 +202,6 @@ class ProductControllerTest {
     @Test
     @DisplayName("DELETE /api/products/{id} - USER 권한, 숨김 상품 삭제 시 Not Found")
     void deleteProductForbiddenForUser() throws Exception {
-        // service should throw ProductNotFoundException to map to 404
         Mockito.doThrow(new gift.exception.custom.ProductNotFoundException(2L))
                 .when(productService).deleteProduct(2L, USER);
 

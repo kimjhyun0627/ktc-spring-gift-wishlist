@@ -21,9 +21,9 @@ public class JwtHeaderFilter extends JwtFilter {
     }
 
     @Override
-    protected boolean shouldFilter(HttpServletRequest request) {
-        String uri = request.getRequestURI();
-        String ctx = request.getContextPath();
+    protected boolean shouldFilter(HttpServletRequest httpServletRequest) {
+        String uri = httpServletRequest.getRequestURI();
+        String ctx = httpServletRequest.getContextPath();
         if (uri.startsWith(ctx + "/api/members")) {
             return false;
         }
@@ -31,8 +31,8 @@ public class JwtHeaderFilter extends JwtFilter {
     }
 
     @Override
-    protected String resolveToken(HttpServletRequest request) {
-        String header = request.getHeader("Authorization");
+    protected String resolveToken(HttpServletRequest httpServletRequest) {
+        String header = httpServletRequest.getHeader("Authorization");
 
         if (header != null && header.startsWith("Bearer ")) {
             return header.substring(7).trim();
@@ -41,10 +41,11 @@ public class JwtHeaderFilter extends JwtFilter {
     }
 
     @Override
-    protected void writeError(HttpServletResponse response, String message) throws IOException {
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.setContentType("application/json;charset=UTF-8");
-        response.getWriter().write(
+    protected void writeError(HttpServletResponse httpServletResponse, String message)
+            throws IOException {
+        httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        httpServletResponse.setContentType("application/json;charset=UTF-8");
+        httpServletResponse.getWriter().write(
                 String.format("{\"code\":\"UNAUTHORIZED\",\"message\":\"%s\"}", message)
         );
     }
