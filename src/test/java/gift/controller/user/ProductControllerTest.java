@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.dto.product.ProductRequest;
+import gift.entity.member.value.Role;
 import gift.entity.product.Product;
 import gift.fixture.ProductFixture;
 import gift.service.product.ProductService;
@@ -39,8 +40,8 @@ import org.springframework.test.web.servlet.MockMvc;
 @DisplayName("ProductController 단위 테스트")
 class ProductControllerTest {
 
-    private static final String USER = "USER";
-    private static final String ADMIN = "ADMIN";
+    private static final Role USER = Role.USER;
+    private static final Role ADMIN = Role.ADMIN;
 
     @Autowired
     private MockMvc mockMvc;

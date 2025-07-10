@@ -19,6 +19,7 @@ import gift.entity.member.Member;
 import gift.entity.member.value.Role;
 import gift.fixture.MemberFixture;
 import gift.service.member.MemberService;
+import gift.service.member.MemberServiceImpl;
 import gift.util.BearerAuthUtil;
 import gift.util.JwtUtil;
 import java.util.List;
@@ -37,7 +38,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureMockMvc(addFilters = false)
 class AdminMemberControllerTest {
 
-    private static final String ADMIN_ROLE = "ADMIN";
+    private static final Role ADMIN = Role.ADMIN;
     @Autowired
     private MockMvc mockMvc;
     @MockitoBean
@@ -67,11 +68,11 @@ class AdminMemberControllerTest {
                     Role.USER
             );
 
-            given(memberService.getAllMembers(ADMIN_ROLE))
+            given(memberService.getAllMembers(ADMIN))
                     .willReturn(List.of(m1, m2));
 
             mockMvc.perform(get("/admin/members")
-                            .requestAttr("authClaims", TestUtils.mockClaims(ADMIN_ROLE)))
+                            .requestAttr("authClaims", TestUtils.mockClaims(String.valueOf(ADMIN))))
                     .andExpect(status().isOk())
                     .andExpect(view().name("admin/member_list"))
                     .andExpect(model().attribute("members", List.of(m1, m2)));
@@ -86,7 +87,7 @@ class AdminMemberControllerTest {
         @DisplayName("회원 생성 폼")
         void 회원생성폼() throws Exception {
             mockMvc.perform(get("/admin/members/new")
-                            .requestAttr("authClaims", TestUtils.mockClaims(ADMIN_ROLE)))
+                            .requestAttr("authClaims", TestUtils.mockClaims(String.valueOf(ADMIN))))
                     .andExpect(status().isOk())
                     .andExpect(view().name("admin/member_form"))
                     .andExpect(model().attributeExists("memberForm"));
@@ -100,22 +101,24 @@ class AdminMemberControllerTest {
         @Test
         @DisplayName("유효한 입력 - 생성 후 리다이렉트")
         void 생성_성공() throws Exception {
+            String raw = "abcdef";
+            String hash = MemberServiceImpl.sha256(raw);
             Member created = MemberFixture.newRegisteredMember(
                     1L,
                     "new@ex.com",
-                    "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+                    hash,
                     Role.USER
             );
             given(memberService.createMember(
-                    eq("new@ex.com"), anyString(), eq("USER"), eq(ADMIN_ROLE)))
+                    eq("new@ex.com"), anyString(), eq(Role.USER), eq(ADMIN)))
                     .willReturn(created);
 
             mockMvc.perform(post("/admin/members/new")
                             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                             .param("email", "new@ex.com")
-                            .param("password", "abcdef")
-                            .param("role", "USER")
-                            .requestAttr("authClaims", TestUtils.mockClaims(ADMIN_ROLE)))
+                            .param("password", raw)
+                            .param("role", String.valueOf(Role.USER))
+                            .requestAttr("authClaims", TestUtils.mockClaims(String.valueOf(ADMIN))))
                     .andExpect(status().is3xxRedirection())
                     .andExpect(redirectedUrl("/admin/members"))
                     .andExpect(flash().attributeExists("info"));
@@ -129,7 +132,7 @@ class AdminMemberControllerTest {
                             .param("email", "")  // NotBlank 위반
                             .param("password", "123")  // Size(min=6) 위반
                             .param("role", "")
-                            .requestAttr("authClaims", TestUtils.mockClaims(ADMIN_ROLE)))
+                            .requestAttr("authClaims", TestUtils.mockClaims(String.valueOf(ADMIN))))
                     .andExpect(status().isOk())
                     .andExpect(view().name("admin/member_form"))
                     .andExpect(model().attributeHasFieldErrors(
@@ -147,14 +150,14 @@ class AdminMemberControllerTest {
             Member existing = MemberFixture.newRegisteredMember(
                     5L,
                     "e@e.com",
-                    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+                    MemberServiceImpl.sha256("password"),
                     Role.ADMIN
             );
-            given(memberService.getMemberById(5L, ADMIN_ROLE))
+            given(memberService.getMemberById(5L, ADMIN))
                     .willReturn(Optional.of(existing));
 
             mockMvc.perform(get("/admin/members/5/edit")
-                            .requestAttr("authClaims", TestUtils.mockClaims(ADMIN_ROLE)))
+                            .requestAttr("authClaims", TestUtils.mockClaims(String.valueOf(ADMIN))))
                     .andExpect(status().isOk())
                     .andExpect(view().name("admin/member_form"))
                     .andExpect(model().attribute("memberForm",
@@ -162,7 +165,7 @@ class AdminMemberControllerTest {
                                     5L,
                                     "e@e.com",
                                     existing.getPassword().password(),
-                                    "ADMIN"
+                                    Role.ADMIN
                             ))
                     ));
         }
@@ -170,11 +173,11 @@ class AdminMemberControllerTest {
         @Test
         @DisplayName("없는 회원 - MemberNotFoundException -> 404")
         void 수정폼_404() throws Exception {
-            given(memberService.getMemberById(99L, ADMIN_ROLE))
+            given(memberService.getMemberById(99L, ADMIN))
                     .willReturn(Optional.empty());
 
             mockMvc.perform(get("/admin/members/99/edit")
-                            .requestAttr("authClaims", TestUtils.mockClaims(ADMIN_ROLE)))
+                            .requestAttr("authClaims", TestUtils.mockClaims(String.valueOf(ADMIN))))
                     .andExpect(status().isNotFound());
         }
     }
@@ -189,11 +192,11 @@ class AdminMemberControllerTest {
             Member updated = MemberFixture.newRegisteredMember(
                     5L,
                     "up@up.com",
-                    "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+                    MemberServiceImpl.sha256("newpass"),
                     Role.USER
             );
             given(memberService.updateMember(
-                    eq(5L), eq("up@up.com"), anyString(), eq("USER"), eq(ADMIN_ROLE)))
+                    eq(5L), eq("up@up.com"), anyString(), eq(Role.USER), eq(ADMIN)))
                     .willReturn(updated);
 
             mockMvc.perform(put("/admin/members/5")
@@ -201,8 +204,8 @@ class AdminMemberControllerTest {
                             .param("id", "5")
                             .param("email", "up@up.com")
                             .param("password", "newpass")
-                            .param("role", "USER")
-                            .requestAttr("authClaims", TestUtils.mockClaims(ADMIN_ROLE)))
+                            .param("role", String.valueOf(Role.USER))
+                            .requestAttr("authClaims", TestUtils.mockClaims(String.valueOf(ADMIN))))
                     .andExpect(status().is3xxRedirection())
                     .andExpect(redirectedUrl("/admin/members"))
                     .andExpect(flash().attributeExists("info"));
@@ -216,7 +219,7 @@ class AdminMemberControllerTest {
                             .param("email", "")  // 빈 이메일
                             .param("password", "123")
                             .param("role", "")
-                            .requestAttr("authClaims", TestUtils.mockClaims(ADMIN_ROLE)))
+                            .requestAttr("authClaims", TestUtils.mockClaims(String.valueOf(ADMIN))))
                     .andExpect(status().isOk())
                     .andExpect(view().name("admin/member_form"))
                     .andExpect(model().attributeHasFieldErrors(
@@ -231,10 +234,10 @@ class AdminMemberControllerTest {
         @Test
         @DisplayName("정상 삭제")
         void 삭제_성공() throws Exception {
-            willDoNothing().given(memberService).deleteMember(7L, ADMIN_ROLE);
+            willDoNothing().given(memberService).deleteMember(7L, ADMIN);
 
             mockMvc.perform(delete("/admin/members/7")
-                            .requestAttr("authClaims", TestUtils.mockClaims(ADMIN_ROLE)))
+                            .requestAttr("authClaims", TestUtils.mockClaims(String.valueOf(ADMIN))))
                     .andExpect(status().is3xxRedirection())
                     .andExpect(redirectedUrl("/admin/members"))
                     .andExpect(flash().attributeExists("info"));

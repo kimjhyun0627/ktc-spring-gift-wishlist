@@ -45,7 +45,7 @@ public class MemberServiceImpl implements MemberService {
         String hash = sha256(req.password());
         Member m = Member.register(req.email(), hash);
         m = memberRepository.register(m);
-        String token = jwtUtil.generateToken(m.getId().id(), m.getRole().name());
+        String token = jwtUtil.generateToken(m.getId().id(), m.getRole());
         return new AuthResponse(token);
     }
 
@@ -56,7 +56,7 @@ public class MemberServiceImpl implements MemberService {
         if (!m.getPassword().password().equals(sha256(rawPassword))) {
             throw new MemberNotFoundException(email);
         }
-        String token = jwtUtil.generateToken(m.getId().id(), m.getRole().name());
+        String token = jwtUtil.generateToken(m.getId().id(), m.getRole());
         return new AuthResponse(token);
     }
 

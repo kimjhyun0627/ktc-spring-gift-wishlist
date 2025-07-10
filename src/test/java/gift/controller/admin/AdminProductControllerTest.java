@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.dto.product.ProductForm;
+import gift.entity.member.value.Role;
 import gift.entity.product.Product;
 import gift.fixture.ProductFixture;
 import gift.service.product.ProductService;
@@ -41,7 +42,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @DisplayName("AdminProductController 단위 테스트 (Fixture 적용)")
 class AdminProductControllerTest {
 
-    private static final String ADMIN = "ADMIN";
+    private static final Role ADMIN = Role.ADMIN;
 
     @Autowired
     private MockMvc mockMvc;

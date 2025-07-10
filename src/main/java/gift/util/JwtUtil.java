@@ -1,5 +1,6 @@
 package gift.util;
 
+import gift.entity.member.value.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -26,7 +27,7 @@ public class JwtUtil {
         expireMillis = expireMillisecond;
     }
 
-    public String generateToken(Long memberId, String role) {
+    public String generateToken(Long memberId, Role role) {
         long now = System.currentTimeMillis();
         Date issuedAt = new Date(now);
         Date expiration = new Date(now + expireMillis);

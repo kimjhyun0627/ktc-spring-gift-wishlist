@@ -8,6 +8,7 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.when;
 
+import gift.entity.member.value.Role;
 import gift.entity.product.Product;
 import gift.exception.custom.ProductNotFoundException;
 import gift.fixture.ProductFixture;
@@ -26,8 +27,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @DisplayName("ProductServiceImpl 단위 테스트")
 class ProductServiceTest {
 
-    private static final String USER = "USER";
-    private static final String ADMIN = "ADMIN";
+    private static final Role USER = Role.USER;
+    private static final Role ADMIN = Role.ADMIN;
 
     @Mock
     private ProductRepository repo;
