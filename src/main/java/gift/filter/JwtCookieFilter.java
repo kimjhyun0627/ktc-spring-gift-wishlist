@@ -22,7 +22,7 @@ public class JwtCookieFilter extends JwtFilter {
     protected boolean shouldFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
         String ctx = request.getContextPath();
-        if (path.startsWith(ctx + "/admin/login") ||
+        if (path.startsWith(ctx + "/admin/*") ||
                 path.startsWith(ctx + "/api/") ||
                 path.startsWith(ctx + "/css/") ||
                 path.startsWith(ctx + "/js/")) {

@@ -4,6 +4,7 @@ import static gift.util.RoleUtil.extractRole;
 
 import gift.dto.member.MemberForm;
 import gift.entity.member.Member;
+import gift.entity.member.value.Role;
 import gift.exception.custom.MemberNotFoundException;
 import gift.service.member.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,15 +34,14 @@ public class AdminMemberController {
 
     @GetMapping
     public String list(HttpServletRequest req, Model model) {
-        String role = extractRole(req);
-        List<Member> members = memberService.getAllMembers(role);
+        List<Member> members = memberService.getAllMembers(extractRole(req));
         model.addAttribute("members", members);
         return "admin/member_list";
     }
 
     @GetMapping("/new")
     public String createForm(Model model) {
-        model.addAttribute("memberForm", new MemberForm(null, "", "", "USER"));
+        model.addAttribute("memberForm", new MemberForm(null, "", "", Role.USER));
         return "admin/member_form";
     }
 
@@ -55,9 +55,8 @@ public class AdminMemberController {
         if (br.hasErrors()) {
             return "admin/member_form";
         }
-        String role = extractRole(req);
         Member created = memberService.createMember(
-                form.email(), form.password(), form.role(), role
+                form.email(), form.password(), form.role(), extractRole(req)
         );
         ra.addFlashAttribute("info", "회원이 등록되었습니다: " + created.getEmail());
         return "redirect:/admin/members";
@@ -69,11 +68,10 @@ public class AdminMemberController {
             Model model,
             HttpServletRequest req
     ) {
-        String role = extractRole(req);
-        Member m = memberService.getMemberById(id, role)
+        Member m = memberService.getMemberById(id, extractRole(req))
                 .orElseThrow(() -> new MemberNotFoundException(id.toString()));
         model.addAttribute("memberForm", new MemberForm(
-                m.getId().id(), m.getEmail().email(), m.getPassword().password(), m.getRole().name()
+                m.getId().id(), m.getEmail().email(), m.getPassword().password(), m.getRole()
         ));
         return "admin/member_form";
     }
@@ -89,9 +87,8 @@ public class AdminMemberController {
         if (br.hasErrors()) {
             return "admin/member_form";
         }
-        String role = extractRole(req);
         Member updated = memberService.updateMember(
-                id, form.email(), form.password(), form.role(), role
+                id, form.email(), form.password(), form.role(), extractRole(req)
         );
         ra.addFlashAttribute("info", "회원 정보가 수정되었습니다: " + updated.getEmail());
         return "redirect:/admin/members";
@@ -103,8 +100,7 @@ public class AdminMemberController {
             RedirectAttributes ra,
             HttpServletRequest req
     ) {
-        String role = extractRole(req);
-        memberService.deleteMember(id, role);
+        memberService.deleteMember(id, extractRole(req));
         ra.addFlashAttribute("info", "회원이 삭제되었습니다. ID=" + id);
         return "redirect:/admin/members";
     }

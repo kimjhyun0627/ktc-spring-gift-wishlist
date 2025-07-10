@@ -1,7 +1,9 @@
 package gift.dto.member;
 
+import gift.entity.member.value.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record MemberForm(
@@ -16,8 +18,8 @@ public record MemberForm(
         @Size(min = 6, max = 64, message = "비밀번호는 6~64자여야 합니다")
         String password,
 
-        @NotBlank(message = "역할을 선택하세요")
-        String role
+        @NotNull(message = "역할을 선택하세요")
+        Role role
 ) {
 
 }

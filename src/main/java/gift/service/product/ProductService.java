@@ -1,22 +1,23 @@
 package gift.service.product;
 
+import gift.entity.member.value.Role;
 import gift.entity.product.Product;
 import java.util.List;
 import java.util.Optional;
 
 public interface ProductService {
 
-    List<Product> getAllProducts(String role);
+    List<Product> getAllProducts(Role role);
 
-    Optional<Product> getProductById(Long id, String role);
+    Optional<Product> getProductById(Long id, Role role);
 
-    Product createProduct(String name, int price, String imageUrl, String role);
+    Product createProduct(String name, int price, String imageUrl, Role role);
 
-    Product updateProduct(Long id, String name, int price, String imageUrl, String role);
+    Product updateProduct(Long id, String name, int price, String imageUrl, Role role);
 
-    void deleteProduct(Long id, String role);
+    void deleteProduct(Long id, Role role);
 
-    void hideProduct(Long id, String role);
+    void hideProduct(Long id, Role role);
 
-    void unhideProduct(Long id, String role);
+    void unhideProduct(Long id, Role role);
 }

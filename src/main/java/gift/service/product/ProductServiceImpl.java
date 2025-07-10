@@ -2,6 +2,7 @@ package gift.service.product;
 
 import static gift.entity.product.value.ProductName.FORBIDDEN_PATTERNS;
 
+import gift.entity.member.value.Role;
 import gift.entity.product.Product;
 import gift.exception.custom.ProductNotFoundException;
 import gift.repository.product.ProductRepository;
@@ -21,9 +22,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getAllProducts(String role) {
+    public List<Product> getAllProducts(Role role) {
         List<Product> all = repo.findAll();
-        if ("USER".equals(role)) {
+        if (role == Role.USER) {
             return all.stream()
                     .filter(p -> !p.hidden())
                     .toList();
@@ -32,29 +33,29 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Optional<Product> getProductById(Long id, String role) {
+    public Optional<Product> getProductById(Long id, Role role) {
         Optional<Product> opt = repo.findById(id);
         Product p = opt.orElseThrow(() -> new ProductNotFoundException(id));
-        if ("USER".equals(role) && p.hidden()) {
+        if (role == Role.USER && p.hidden()) {
             throw new ProductNotFoundException(id);
         }
         return Optional.of(p);
     }
 
     @Override
-    public Product createProduct(String name, int price, String imageUrl, String role) {
+    public Product createProduct(String name, int price, String imageUrl, Role role) {
         Product newProduct = Product.of(name, price, imageUrl);
-        if ("USER".equals(role) && isForbidden(name)) {
+        if (role == Role.USER && isForbidden(name)) {
             newProduct = newProduct.withHidden(true);
         }
         return repo.save(newProduct);
     }
 
     @Override
-    public Product updateProduct(Long id, String name, int price, String imageUrl, String role) {
+    public Product updateProduct(Long id, String name, int price, String imageUrl, Role role) {
         Product existing = repo.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException(id));
-        if ("USER".equals(role) && existing.hidden()) {
+        if (role == Role.USER && existing.hidden()) {
             throw new ProductNotFoundException(id);
         }
 
@@ -62,25 +63,25 @@ public class ProductServiceImpl implements ProductService {
                 .withPrice(price)
                 .withImageUrl(imageUrl);
 
-        if ("USER".equals(role) && isForbidden(name)) {
+        if (role == Role.USER && isForbidden(name)) {
             updated = updated.withHidden(true);
         }
         return repo.save(updated);
     }
 
     @Override
-    public void deleteProduct(Long id, String role) {
+    public void deleteProduct(Long id, Role role) {
         Product existing = repo.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException(id));
-        if ("USER".equals(role) && existing.hidden()) {
+        if (role == Role.USER && existing.hidden()) {
             throw new ProductNotFoundException(id);
         }
         repo.deleteById(id);
     }
 
     @Override
-    public void hideProduct(Long id, String role) {
-        if ("USER".equals(role)) {
+    public void hideProduct(Long id, Role role) {
+        if (role == Role.USER) {
             throw new ProductNotFoundException(id);
         }
         Product p = repo.findById(id)
@@ -89,8 +90,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void unhideProduct(Long id, String role) {
-        if ("USER".equals(role)) {
+    public void unhideProduct(Long id, Role role) {
+        if (role == Role.USER) {
             throw new ProductNotFoundException(id);
         }
         Product p = repo.findById(id)

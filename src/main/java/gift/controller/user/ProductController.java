@@ -34,8 +34,7 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<List<ProductResponse>> getAll(HttpServletRequest request) {
-        String role = extractRole(request);
-        List<ProductResponse> list = productService.getAllProducts(role).stream()
+        List<ProductResponse> list = productService.getAllProducts(extractRole(request)).stream()
                 .map(Product::toResponse)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(list);
