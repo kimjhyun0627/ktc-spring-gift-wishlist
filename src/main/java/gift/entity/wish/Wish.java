@@ -70,6 +70,14 @@ public class Wish {
         );
     }
 
+    public boolean isOwnedBy(Long memberId) {
+        return this.memberId.id().equals(memberId);
+    }
+
+    public boolean isForProduct(Long productId) {
+        return this.productId.productId().equals(productId);
+    }
+
     public WishId getId() {
         return id == null ? null : new WishId(id.id());
     }

@@ -56,7 +56,7 @@ public class JwtUtil {
     }
 
     public Claims getClaims(String token) {
-        return parseToken(token).getBody();
+        return parseToken(token).getPayload();
     }
 
     public Long getMemberId(String token) {

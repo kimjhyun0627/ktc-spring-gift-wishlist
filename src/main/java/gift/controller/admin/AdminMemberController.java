@@ -38,7 +38,7 @@ public class AdminMemberController {
     }
 
     @GetMapping("/new")
-    public String createForm(@CurrentRole Role role, Model model) {
+    public String createForm(Model model) {
         model.addAttribute(
                 "memberForm",
                 new MemberForm(null, "", "", Role.USER));

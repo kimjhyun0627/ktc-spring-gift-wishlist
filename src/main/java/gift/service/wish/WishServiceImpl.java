@@ -58,11 +58,11 @@ public class WishServiceImpl implements WishService {
         if (existing == null) {
             throw new WishNotFoundException(id);
         }
-        if (!existing.getMemberId().id().equals(memberId)) {
+        if (!existing.isOwnedBy(memberId)) {
             throw new UnauthorizedWishAccessException(memberId, id);
         }
-        if (!existing.getProductId().productId().equals(productId)) {
-            throw new InvalidProductException("상품의 수량만 변경 가능합니다: " + productId.toString());
+        if (!existing.isForProduct(productId)) {
+            throw new InvalidProductException("상품의 수량만 변경 가능합니다: " + productId);
         }
         existing.withAmount(amount);
         return wishRepository.update(existing);
@@ -70,7 +70,7 @@ public class WishServiceImpl implements WishService {
 
     public void removeWish(Long memberId, Long wishId) {
         Wish wish = wishRepository.findById(wishId);
-        if (!wish.getMemberId().id().equals(memberId)) {
+        if (!wish.isOwnedBy(memberId)) {
             throw new UnauthorizedWishAccessException(memberId, wish.getId().id());
         }
         wishRepository.delete(wish.getId().id());
